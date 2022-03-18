@@ -113,7 +113,6 @@
 				959ECE5E6F6F14412CD5D2EB /* Pods-CurrencyConverterTests.debug.xcconfig */,
 				9ECE4DC97F2DA8529DFC8EE2 /* Pods-CurrencyConverterTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -142,6 +141,11 @@
 		8475303A27E4AE9A00BEDA7E /* CurrencyConverter */ = {
 			isa = PBXGroup;
 			children = (
+				8475307427E4B44C00BEDA7E /* Helper */,
+				8475307327E4B43000BEDA7E /* DTOs */,
+				8475307027E4B39D00BEDA7E /* DataStoreLayer */,
+				8475306F27E4B38F00BEDA7E /* BusinessLayer */,
+				8475306E27E4B37800BEDA7E /* PresentationLayer */,
 				8475303B27E4AE9A00BEDA7E /* AppDelegate.swift */,
 				8475303D27E4AE9A00BEDA7E /* SceneDelegate.swift */,
 				8475303F27E4AE9A00BEDA7E /* ViewController.swift */,
@@ -169,6 +173,97 @@
 				8475306127E4AE9F00BEDA7E /* CurrencyConverterUITestsLaunchTests.swift */,
 			);
 			path = CurrencyConverterUITests;
+			sourceTree = "<group>";
+		};
+		8475306E27E4B37800BEDA7E /* PresentationLayer */ = {
+			isa = PBXGroup;
+			children = (
+				8475307227E4B3EE00BEDA7E /* ViewModels */,
+				8475307127E4B3E200BEDA7E /* ViewControllers */,
+			);
+			path = PresentationLayer;
+			sourceTree = "<group>";
+		};
+		8475306F27E4B38F00BEDA7E /* BusinessLayer */ = {
+			isa = PBXGroup;
+			children = (
+				8475307927E4B59E00BEDA7E /* Handler */,
+				8475307827E4B59500BEDA7E /* UseCase */,
+			);
+			path = BusinessLayer;
+			sourceTree = "<group>";
+		};
+		8475307027E4B39D00BEDA7E /* DataStoreLayer */ = {
+			isa = PBXGroup;
+			children = (
+				8475307727E4B4B400BEDA7E /* Repo */,
+				8475307627E4B4AA00BEDA7E /* Router */,
+				8475307527E4B49700BEDA7E /* Store */,
+			);
+			path = DataStoreLayer;
+			sourceTree = "<group>";
+		};
+		8475307127E4B3E200BEDA7E /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		8475307227E4B3EE00BEDA7E /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8475307327E4B43000BEDA7E /* DTOs */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DTOs;
+			sourceTree = "<group>";
+		};
+		8475307427E4B44C00BEDA7E /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		8475307527E4B49700BEDA7E /* Store */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Store;
+			sourceTree = "<group>";
+		};
+		8475307627E4B4AA00BEDA7E /* Router */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Router;
+			sourceTree = "<group>";
+		};
+		8475307727E4B4B400BEDA7E /* Repo */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Repo;
+			sourceTree = "<group>";
+		};
+		8475307827E4B59500BEDA7E /* UseCase */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = UseCase;
+			sourceTree = "<group>";
+		};
+		8475307927E4B59E00BEDA7E /* Handler */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Handler;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

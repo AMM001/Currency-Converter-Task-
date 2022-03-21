@@ -43,36 +43,6 @@ extension CurrencyModel {
     }
 }
 
-// MARK: - Mappings to Domain
-
-//extension MoviesResponseDTO {
-//    func toDomain() -> MoviesPage {
-//        return .init(page: page,
-//                     totalPages: totalPages,
-//                     movies: movies.map { $0.toDomain() })
-//    }
-//}
-//
-//extension MoviesResponseDTO.MovieDTO {
-//    func toDomain() -> Movie {
-//        return .init(id: Movie.Identifier(id),
-//                     title: title,
-//                     genre: genre?.toDomain(),
-//                     posterPath: posterPath,
-//                     overview: overview,
-//                     releaseDate: dateFormatter.date(from: releaseDate ?? ""))
-//    }
-//}
-//
-//extension MoviesResponseDTO.MovieDTO.GenreDTO {
-//    func toDomain() -> Movie.Genre {
-//        switch self {
-//        case .adventure: return .adventure
-//        case .scienceFiction: return .scienceFiction
-//        }
-//    }
-//}
-
 // MARK: - Private
 
 private let dateFormatter: DateFormatter = {

@@ -30,6 +30,8 @@ final class APIService: APIServiceProtocol {
         if let data = endPoint.data {
             request.httpBody = data
         }
+        print("request+++++++++++\(request)")
+
 
         /// Make request
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
@@ -42,6 +44,7 @@ final class APIService: APIServiceProtocol {
                 completion(.failure(APIError.noData))
                 return
             }
+            print("data+++++++++++\(data)")
             
             completion(.success(data!))
         }

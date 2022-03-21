@@ -32,11 +32,12 @@ struct EndPoint {
 extension EndPoint {
 
     static func currencyList() -> EndPoint {
-        return EndPoint(method: .get, path: "/list", queryItem: [AppConstants.APIParams.accessKey : AppConstants.Keys.currencyLayerAPIKey])
+        // http://data.fixer.io/api/
+        return EndPoint(method: .get, path: "/latest", queryItem: [AppConstants.APIParams.accessKey : AppConstants.Keys.currencyLayerAPIKey])
     }
-        
+        // http://data.fixer.io/api/convert
     static func currencyRate(items:[String:String]) -> EndPoint {
-        return EndPoint(method: .get, path: "/live", queryItem: items.merging([AppConstants.APIParams.accessKey : AppConstants.Keys.currencyLayerAPIKey]) { (_, new) in new })
+        return EndPoint(method: .get, path: "/convert", queryItem: items.merging([AppConstants.APIParams.accessKey : AppConstants.Keys.currencyLayerAPIKey]) { (_, new) in new })
     }
 }
 

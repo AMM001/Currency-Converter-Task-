@@ -53,6 +53,7 @@ class CurrencyConverterViewModel {
                 do {
                     //                    print(String(decoding: data, as: UTF8.self))
                     let response = try JSONDecoder().decode(CurrencyListResponse.self, from: data)
+                    print(response.currencies)
                     guard response.success == true else {
                         self?.showAlert?(response.errorMsg ?? APIError.unknownError.rawValue)
                         return

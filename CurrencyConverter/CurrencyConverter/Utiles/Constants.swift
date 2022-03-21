@@ -10,7 +10,7 @@ import Foundation
 /// API Constants
 struct APP_URL {
     static let scheme = "http"
-    static let host = "api.currencylayer.com"
+    static let host = "data.fixer.io/api" // http://data.fixer.io/api/
 }
 
 /// HTTPMethod type
@@ -51,7 +51,7 @@ struct AppConstants {
     
     /// SDK keys
     struct Keys {
-        static let currencyLayerAPIKey = "6c1bae4bdf29f70ef95ed3288daffded"
+        static let currencyLayerAPIKey = "01ebf7be69c410a14e3b00d9bb638106"
         
     }
     

@@ -51,7 +51,7 @@ struct AppConstants {
     
     /// SDK keys
     struct Keys {
-        static let currencyLayerAPIKey = "01ebf7be69c410a14e3b00d9bb638106"
+        static let currencyLayerAPIKey = "c6a7eb2238c9291a548f713fa91c03e0"
         
     }
     

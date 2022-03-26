@@ -6,39 +6,26 @@
 //
 
 import Foundation
+import RxSwift
 
 class CurrencyConverterViewModel {
     
     private let apiService: APIServiceProtocol
+    private let disposeBag = DisposeBag()
     
+    //MARK:- OBSERVERS
+    let currenciesObserver: PublishSubject<AvRxResult<[CurrencyDataViewModel]>> = PublishSubject()
+    let convertObserver: PublishSubject<AvRxResult<Int>> = PublishSubject()
+
     init( apiService: APIServiceProtocol = APIService()) {
         self.apiService = apiService
     }
-    
-    internal var currencyCount: Int {
-        return cellViewModels.count
-    }
-    private var cellViewModels: [CurrencyDataViewModel] = [CurrencyDataViewModel]() {
-        didSet {
-            self.updataCurrListData?()
-            self.updataCurrConvertData?()
-        }
-    }
-    
+        
     // Closure
     var showAlert: ((String) -> Void)?
-    var updataCurrListData: (() -> ())?
-    var updataCurrConvertData: (() -> ())?
-    
-    
-  
-    
-    //MARK: - Private
-    
-    /// Create DataCellViewModel for collection view and append to cellViewModels
-    /// - Parameter models: Array of Photo model
-    private func processFetchedData(_ models: [String:String]) {
-        self.cellViewModels = models.map { CurrencyDataViewModel(code: $0.key, name: $0.value)  }.sorted(by: ({ $0.name < $1.name }))
+   
+    private func processFetchedData(_ models: [String:String]) -> [CurrencyDataViewModel] {
+        return models.map { CurrencyDataViewModel(code: $0.key, name: $0.value)  }.sorted(by: ({ $0.name < $1.name }))
     }
     
     
@@ -46,39 +33,56 @@ class CurrencyConverterViewModel {
     
     /// Get all available currencies list
     func getCurrenciesList() {
-        
-        self.apiService.getDataFromURL(.currencyList()) { [weak self] (result) in
-            switch result {
-            case .success(let data):
-                do {
-                    //                    print(String(decoding: data, as: UTF8.self))
-                    let response = try JSONDecoder().decode(CurrencyListResponse.self, from: data)
-                    print(response.currencies)
-                    guard response.success == true else {
-                        self?.showAlert?(response.errorMsg ?? APIError.unknownError.rawValue)
-                        return
-                    }
-                    if let currencies = response.currencies {
-                        self?.processFetchedData(currencies)
-                    }
-                    
-                } catch {
-                    self?.showAlert?(APIError.decodeError.rawValue)
+        CurrencyStore.getAvailableCountries()
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { countries in
+                print("List of countries:", countries)
+                if let symbols = countries.symbols {
+                    self.currenciesObserver.onNext(.success( self.processFetchedData(symbols)))
                 }
-            case .failure(let err):
-                self?.showAlert?(err.rawValue)
-                
-            }
-        }
+            }, onError: { error in
+                self.currenciesObserver.onNext(.failure(error))
+                switch error {
+                case ApiError.conflict:
+                    self.showAlert?(error.localizedDescription)
+                    print("Conflict error")
+                case ApiError.forbidden:
+                    print("Forbidden error")
+                case ApiError.notFound:
+                    print("Not found error")
+                default:
+                    print("Unknown error:", error)
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
-    /// Get DataCellViewModel from cellViewModels
-    /// - Parameter index: query index number
-    func getCellViewModel( at index: NSInteger ) -> CurrencyDataViewModel {
-        return cellViewModels[index]
+    func convertCurrency(from:String ,to:String , amount:String) {
+        let param = ["from":from , "to":to , "amount":amount]
+        CurrencyStore.convert(param)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { model in
+                print("convert response:", model)
+                if let result = model.result {
+                    self.convertObserver.onNext(.success( result))
+                }
+            }, onError: { error in
+                self.convertObserver.onNext(.failure(error))
+                self.showAlert?(error.localizedDescription)
+                switch error {
+                case ApiError.conflict:
+                    print("Conflict error")
+                case ApiError.forbidden:
+                    print("Forbidden error")
+                case ApiError.notFound:
+                    print("Not found error")
+                default:
+                    print("Unknown error:", error)
+                }
+            })
+            .disposed(by: disposeBag)
+        
     }
-    
-    
 }
 
 // MARK:- DataCellViewModel

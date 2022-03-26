@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 class CurrencyConverterViewController: UIViewController {
     
@@ -17,12 +18,27 @@ class CurrencyConverterViewController: UIViewController {
     @IBOutlet weak var fromLabel: UILabel!
     @IBOutlet weak var toLabel: UILabel!
     
+    private let disposeBag = DisposeBag()
+    
+    var countries: [String] = []
+    var countriesDic: [String:String] = ["":""]
+    var resultConvert :Int = 0
+    var currencyDataViewModel = [CurrencyDataViewModel]()
+    
     ///Local
     internal lazy var viewModel: CurrencyConverterViewModel = {
         return CurrencyConverterViewModel()
     }()
-        
-    internal lazy var pickerView: ToolbarPickerView = {
+    
+    internal lazy var fromPickerView: ToolbarPickerView = {
+        let picker = ToolbarPickerView()
+        picker.toolbarDelegate = self
+        picker.delegate = self
+        picker.dataSource = self
+        return picker
+    }()
+    
+    internal lazy var toPickerView: ToolbarPickerView = {
         let picker = ToolbarPickerView()
         picker.toolbarDelegate = self
         picker.delegate = self
@@ -32,34 +48,61 @@ class CurrencyConverterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.subscribeObservers()
         self.viewModel.getCurrenciesList()
         self.setUpPickerView()
         self.title = "Currency Converter"
     }
     
+    
+    func subscribeObservers() {
+        viewModel.currenciesObserver.asDriver(onErrorJustReturn: AvRxResult.getGenericError()).drive(onNext: { [weak self] (countries) in
+            guard let self = self else { return }
+            self.currencyDataViewModel = countries.successResult ?? [CurrencyDataViewModel]()
+        }).disposed(by: disposeBag)
+        
+        viewModel.convertObserver.asDriver(onErrorJustReturn: AvRxResult.getGenericError()).drive(onNext: { [weak self] (result) in
+            guard let self = self else { return }
+            self.resultConvert = result.successResult ?? 0
+            self.toTF.text = "\(result.successResult ?? 0)"
+        }).disposed(by: disposeBag)
+    }
+    
+    
     func setUpPickerView() {
         self.fromTF.didMoveToSuperview()
-        self.fromTF.inputView = self.pickerView
-        self.fromTF.inputAccessoryView = self.pickerView.toolbar
-        self.toTF.inputView = self.pickerView
-        self.toTF.inputAccessoryView = self.pickerView.toolbar
+        self.fromTF.inputView = self.fromPickerView
+        self.fromTF.inputAccessoryView = self.fromPickerView.toolbar
+        
+        self.toTF.didMoveToSuperview()
+        self.toTF.inputView = self.toPickerView
+        self.toTF.inputAccessoryView = self.toPickerView.toolbar
     }
     
     
     @IBAction func convertBtn(_ sender: Any) {
-        
+        let amount =  self.fromAmount.text ?? ""
+        self.viewModel.convertCurrency(from: self.fromLabel.text ?? "", to: self.toLabel.text ?? "", amount:amount )
     }
     
     @IBAction func detailesBtn(_ sender: Any) {
         
     }
     
-    
+    private func viewModelClosures() {
+        
+        /// Naive binding
+        viewModel.showAlert = { (message) in
+            DispatchQueue.main.async {
+                UIAlertController.showAlert(title: LocalizableStrings.error, message: message, cancelButton: LocalizableStrings.ok)
+            }
+        }
+    }
 }
 
 extension CurrencyConverterViewController : ToolbarPickerViewDelegate {
     func didTapDone() {
-        
+        self.view.endEditing(true)
     }
     
     func didTapCancel() {
@@ -76,15 +119,18 @@ extension CurrencyConverterViewController: UIPickerViewDelegate, UIPickerViewDat
     }
     
     public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return viewModel.currencyCount
+        return currencyDataViewModel.count
     }
     
     public func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        let model = viewModel.getCellViewModel( at: row )
-        return "\(model.name) (\(model.code))"
+        return "\(currencyDataViewModel[row].name) (\(currencyDataViewModel[row].code))"
     }
     
     public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        self.fromLabel.text = viewModel.getCellViewModel( at: row ).code
+        if pickerView == fromPickerView {
+            self.fromLabel.text = currencyDataViewModel[row].code
+        }else{
+            self.toLabel.text = currencyDataViewModel[row].code
+        }
     }
 }
